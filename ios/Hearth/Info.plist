@@ -12,6 +12,12 @@
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>DMSans.ttf</string>
+		<string>Lora-Italic.ttf</string>
+		<string>Lora.ttf</string>
+	</array>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
