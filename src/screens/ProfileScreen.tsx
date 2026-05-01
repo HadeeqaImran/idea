@@ -1,6 +1,9 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Ionicon from '@react-native-vector-icons/ionicons/static';
+import type { IoniconsIconName } from '@react-native-vector-icons/ionicons/static';
 import { colors, spacing, typeScale } from '../theme';
+import { useUser, userInitial } from '../context/UserContext';
 import {
   Avatar,
   Chip,
@@ -49,7 +52,11 @@ function SettingRow({
   return (
     <View style={[styles.settingRow, borderless && styles.rowNoBorder]}>
       <View style={styles.profileRow}>
-        <Text style={styles.settingIcon}>{icon}</Text>
+        <Ionicon
+          name={icon as IoniconsIconName}
+          size={18}
+          color={colors.darkEspresso}
+        />
         <View>
           <Text style={styles.rowTitle}>{title}</Text>
           <Text style={styles.rowMeta}>{detail}</Text>
@@ -63,15 +70,17 @@ function SettingRow({
 }
 
 export function ProfileScreen() {
+  const { user } = useUser();
   return (
     <>
       <View style={styles.profileHeader}>
-        <Avatar label="S" large />
-        <Text style={styles.headingTitle}>Sarah Rahman</Text>
+        <Avatar label={userInitial(user)} large />
+        <Text style={styles.headingTitle}>{user.name}</Text>
         <Text style={styles.sectionMeta}>
-          Home cook · London · Member since Jan 2025
+          Home cook{user.location ? ` · ${user.location}` : ''}
+          {user.memberSince ? ` · Member since ${user.memberSince}` : ''}
         </Text>
-        <Chip label="✨ Hearth Premium" tone="gold" />
+        {user.isPremium && <Chip label="PantryPal Premium" tone="gold" />}
       </View>
 
       <View style={styles.statStrip}>
@@ -82,7 +91,7 @@ export function ProfileScreen() {
 
       <SectionLabel label="Household" />
       <SurfaceCard style={styles.stackGap}>
-        <MemberRow name="Sarah (you)" detail="Admin" label="S" />
+        <MemberRow name={`${user.name.split(' ')[0]} (you)`} detail="Admin" label={userInitial(user)} />
         <MemberRow name="Jamie" detail="Can add to pantry & shopping" label="J" sage />
         <Text style={styles.inviteText}>+ Invite household member</Text>
       </SurfaceCard>
@@ -90,13 +99,13 @@ export function ProfileScreen() {
       <SectionLabel label="Preferences" />
       <SurfaceCard style={styles.stackGap}>
         <SettingRow
-          icon="🔔"
+          icon="notifications-outline"
           title="Expiry reminders"
           detail="3 days before"
           enabled
         />
         <SettingRow
-          icon="🌙"
+          icon="moon-outline"
           title="Dark mode"
           detail="Follows system"
           borderless
@@ -165,9 +174,6 @@ const styles = StyleSheet.create({
   rowNoBorder: {
     borderBottomWidth: 0,
     paddingBottom: 0,
-  },
-  settingIcon: {
-    fontSize: 18,
   },
   toggle: {
     width: 36,

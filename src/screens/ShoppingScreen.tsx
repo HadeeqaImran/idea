@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { colors, radii, spacing, typeScale } from '../theme';
 import {
+  AppHeader,
   FloatingButton,
   PillButton,
   SecondaryButton,
@@ -39,10 +40,12 @@ function ShopRow({
 export function ShoppingScreen() {
   return (
     <>
-      <View style={styles.rowBetween}>
-        <Text style={styles.displayTitle}>Shopping</Text>
-        <FloatingButton label="+" />
-      </View>
+      <AppHeader
+        title="Shopping"
+        rightAccessory={<FloatingButton label="+" />}
+        showMenuButton={false}
+        style={styles.header}
+      />
 
       <View style={styles.summaryBanner}>
         <View>
@@ -55,19 +58,19 @@ export function ShoppingScreen() {
         </View>
       </View>
 
-      <SectionLabel label="🥬 Produce" />
+      <SectionLabel label="Produce" />
       <SurfaceCard style={styles.stackGap}>
         <ShopRow title="Fresh basil" meta="For Caprese salad · 1 bunch" price="~£1.50" />
         <ShopRow title="Cherry tomatoes" meta="Restocking (3 days left) · 400g" price="~£2.20" borderless />
       </SurfaceCard>
 
-      <SectionLabel label="🥛 Dairy & Eggs" />
+      <SectionLabel label="Dairy & Eggs" />
       <SurfaceCard style={styles.stackGap}>
         <ShopRow title="Full fat milk" meta="2 litre" price="✓ Got it" done />
         <ShopRow title="Feta cheese" meta="For Shakshuka · 200g" price="~£3.00" borderless />
       </SurfaceCard>
 
-      <SectionLabel label="🍞 Bakery" />
+      <SectionLabel label="Bakery" />
       <SurfaceCard style={styles.stackGap}>
         <ShopRow title="Sourdough loaf" meta="For lunch this week" price="~£3.50" borderless />
       </SurfaceCard>
@@ -81,10 +84,8 @@ export function ShoppingScreen() {
 }
 
 const styles = StyleSheet.create({
-  rowBetween: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+  header: {
+    marginBottom: spacing.md,
   },
   rowGapSm: {
     flexDirection: 'row',
@@ -94,10 +95,6 @@ const styles = StyleSheet.create({
   },
   flexOne: {
     flex: 1,
-  },
-  displayTitle: {
-    ...typeScale.displayLg,
-    color: colors.darkEspresso,
   },
   stackGap: {
     marginTop: spacing.md,

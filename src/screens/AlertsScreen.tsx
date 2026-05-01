@@ -1,7 +1,15 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { colors, radii, spacing, typeScale } from '../theme';
-import { PillButton, SecondaryButton, SectionLabel, SurfaceCard } from '../components/ui';
+import Ionicon from '@react-native-vector-icons/ionicons/static';
+import type { IoniconsIconName } from '@react-native-vector-icons/ionicons/static';
+import { colors, spacing, typeScale } from '../theme';
+import {
+  AppHeader,
+  PillButton,
+  SecondaryButton,
+  SectionLabel,
+  SurfaceCard,
+} from '../components/ui';
 
 function AlertRow({
   icon,
@@ -28,7 +36,11 @@ function AlertRow({
           tone === 'gold' && styles.alertIconGold,
         ]}
       >
-        <Text>{icon}</Text>
+        <Ionicon
+          name={icon as IoniconsIconName}
+          size={18}
+          color={colors.darkEspresso}
+        />
       </View>
       <View style={styles.flexOne}>
         <Text style={styles.rowTitle}>{title}</Text>
@@ -65,7 +77,11 @@ function SimpleAlert({
   return (
     <View style={[styles.alertRow, borderless && styles.rowNoBorder]}>
       <View style={[styles.alertIconWrap, sage && styles.alertIconSage]}>
-        <Text>{icon}</Text>
+        <Ionicon
+          name={icon as IoniconsIconName}
+          size={18}
+          color={colors.darkEspresso}
+        />
       </View>
       <View style={styles.flexOne}>
         <Text style={styles.rowTitle}>{title}</Text>
@@ -79,29 +95,33 @@ function SimpleAlert({
 export function AlertsScreen() {
   return (
     <>
-      <Text style={styles.displayTitle}>Alerts</Text>
-      <Text style={styles.sectionCopy}>3 things need your attention.</Text>
+      <AppHeader
+        title="Alerts"
+        subtitle="3 things need your attention."
+        showMenuButton={false}
+        style={styles.header}
+      />
 
       <SectionLabel label="Today" />
       <SurfaceCard style={styles.stackGap}>
         <AlertRow
-          icon="⚠️"
+          icon="alert-outline"
           title="Milk expires tomorrow"
           copy="You have 900ml left. Three recipes use it. Want to cook one tonight?"
           actions={['See recipes', 'Dismiss']}
           tone="terra"
         />
         <AlertRow
-          icon="📖"
+          icon="book-outline"
           title="Marco posted 2 new recipes"
           copy="In Mediterranean Simplicity: Penne Arrabbiata and Ribollita. You have everything for one."
           actions={['View recipes']}
           tone="sage"
         />
         <AlertRow
-          icon="🛒"
+          icon="cart-outline"
           title="Shopping list updated"
-          copy="Hearth added three items from your meal plan: fresh basil, feta, and cherry tomatoes."
+          copy="PantryPal added three items from your meal plan: fresh basil, feta, and cherry tomatoes."
           actions={['View list']}
           tone="gold"
           borderless
@@ -111,13 +131,13 @@ export function AlertsScreen() {
       <SectionLabel label="Earlier this week" />
       <SurfaceCard style={styles.stackGap}>
         <SimpleAlert
-          icon="💬"
+          icon="chatbubble-outline"
           title="Amara replied to your comment"
           copy='On Roasted Aubergine: "Try adding a little tahini…"'
           meta="Mon"
         />
         <SimpleAlert
-          icon="🌿"
+          icon="leaf-outline"
           title="Your pantry is well stocked"
           copy="34 items, 18 recipes available. Great week to try something new."
           meta="Sun"
@@ -130,14 +150,7 @@ export function AlertsScreen() {
 }
 
 const styles = StyleSheet.create({
-  displayTitle: {
-    ...typeScale.displayLg,
-    color: colors.darkEspresso,
-  },
-  sectionCopy: {
-    ...typeScale.bodySm,
-    color: colors.warmTaupe,
-    marginTop: spacing.xs,
+  header: {
     marginBottom: spacing.md,
   },
   stackGap: {

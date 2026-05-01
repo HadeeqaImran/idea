@@ -1,5 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Ionicon from '@react-native-vector-icons/ionicons/static';
+import type { IoniconsIconName } from '@react-native-vector-icons/ionicons/static';
 import { colors, radii, spacing, typeScale } from '../../theme';
 import { WarmCard } from './Cards';
 
@@ -20,7 +22,7 @@ export function MetricCard({
 }) {
   return (
     <WarmCard style={styles.metricCard}>
-      <Text style={styles.metricIcon}>{icon}</Text>
+      <Ionicon name={icon as IoniconsIconName} size={20} color={colors.darkEspresso} />
       <Text style={[styles.metricValue, accent && styles.metricValueAccent]}>
         {value}
       </Text>
@@ -47,10 +49,6 @@ export function MiniMetric({ label, value }: { label: string; value: string }) {
 const styles = StyleSheet.create({
   metricCard: {
     width: '48.7%',
-  },
-  metricIcon: {
-    fontSize: 20,
-    marginBottom: spacing.xs,
   },
   metricValue: {
     fontFamily: undefined,

@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Ionicon from '@react-native-vector-icons/ionicons/static';
 import { colors, radii, spacing, typeScale } from '../theme';
 import {
   Chip,
@@ -18,8 +19,8 @@ export function OnboardingScreen() {
       <View style={styles.splashCard}>
         <View style={styles.splashOrbLarge} />
         <View style={styles.splashOrbSmall} />
-        <Text style={styles.splashEmoji}>🏡</Text>
-        <Text style={styles.splashLogo}>hearth</Text>
+        <Ionicon name="home-outline" size={56} color={colors.white} />
+        <Text style={styles.splashLogo}>pantrypal</Text>
         <Text style={styles.splashCopy}>
           Your warm home assistant for a calmer, better-run home.
         </Text>
@@ -29,9 +30,9 @@ export function OnboardingScreen() {
 
       <SurfaceCard style={styles.stackGap}>
         <ProgressDots activeIndex={0} />
-        <Text style={styles.displayTitle}>Tell us about{'\n'}your home 🏠</Text>
+        <Text style={styles.displayTitle}>Tell us about{'\n'}your home</Text>
         <Text style={styles.sectionCopy}>
-          So Hearth can personalise your experience.
+          So PantryPal can personalise your experience.
         </Text>
         <SectionLabel label="Household size" />
         <View style={styles.twoColumnGrid}>
@@ -50,33 +51,31 @@ export function OnboardingScreen() {
         </View>
         <SectionLabel label="Cooking confidence" />
         <View style={styles.threeColumnGrid}>
-          <SelectionTile compact label="🌱 Beginner" />
-          <SelectionTile compact label="🍳 Home cook" active />
-          <SelectionTile compact label="👨‍🍳 Experienced" />
+          <SelectionTile compact label="Beginner" />
+          <SelectionTile compact label="Home cook" active />
+          <SelectionTile compact label="Experienced" />
         </View>
         <PillButton label="Continue" style={styles.topMarginMd} />
       </SurfaceCard>
 
       <SurfaceCard style={styles.stackGap}>
         <ProgressDots activeIndex={1} />
-        <Text style={styles.displayTitle}>
-          What's usually{'\n'}in your kitchen? 🫙
-        </Text>
+        <Text style={styles.displayTitle}>What's usually{'\n'}in your kitchen?</Text>
         <Text style={styles.sectionCopy}>
           Tap everything you usually keep stocked.
         </Text>
         <View style={styles.iconGrid}>
           {([
-            ['🥚', 'Eggs', true],
-            ['🧄', 'Garlic', true],
-            ['🫒', 'Olive oil', false],
-            ['🍝', 'Pasta', true],
-            ['🍚', 'Rice', false],
-            ['🧅', 'Onions', true],
-            ['🥫', 'Tomatoes', false],
-            ['🍋', 'Lemon', false],
-            ['🧈', 'Butter', true],
-          ] as const).map(([emoji, label, selected]) => (
+            ['egg-outline', 'Eggs', true],
+            ['nutrition-outline', 'Garlic', true],
+            ['leaf-outline', 'Olive oil', false],
+            ['restaurant-outline', 'Pasta', true],
+            ['nutrition-outline', 'Rice', false],
+            ['nutrition-outline', 'Onions', true],
+            ['nutrition-outline', 'Tomatoes', false],
+            ['nutrition-outline', 'Lemon', false],
+            ['nutrition-outline', 'Butter', true],
+          ] as const).map(([icon, label, selected]) => (
             <View
               key={label}
               style={[
@@ -84,7 +83,11 @@ export function OnboardingScreen() {
                 selected ? styles.iconTileActive : styles.iconTileInactive,
               ]}
             >
-              <Text style={styles.iconTileEmoji}>{emoji}</Text>
+              <Ionicon
+                name={icon}
+                size={22}
+                color={selected ? colors.white : colors.darkEspresso}
+              />
               <Text
                 style={[
                   styles.iconTileLabel,
@@ -103,7 +106,7 @@ export function OnboardingScreen() {
         <ProgressDots activeIndex={3} />
         <Text style={styles.displayTitle}>You're home</Text>
         <Text style={styles.sectionCopy}>
-          Hearth is ready with pantry tracking, calm reminders, and a personal
+          PantryPal is ready with pantry tracking, calm reminders, and a personal
           AI chef grounded in what you actually have.
         </Text>
         <View style={styles.statStrip}>
@@ -111,7 +114,7 @@ export function OnboardingScreen() {
           <MiniMetric label="Recipes now" value="18" />
           <MiniMetric label="Alerts this week" value="3" />
         </View>
-        <PillButton label="Enter Hearth" />
+        <PillButton label="Enter PantryPal" />
       </WarmCard>
     </>
   );
@@ -142,10 +145,6 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 75,
     backgroundColor: 'rgba(255,255,255,0.04)',
-  },
-  splashEmoji: {
-    fontSize: 56,
-    marginBottom: spacing.md,
   },
   splashLogo: {
     ...typeScale.displayXl,
@@ -216,9 +215,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.warmCream,
     borderWidth: 1,
     borderColor: colors.border,
-  },
-  iconTileEmoji: {
-    fontSize: 22,
   },
   iconTileLabel: {
     ...typeScale.label,

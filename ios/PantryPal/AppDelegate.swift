@@ -24,7 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     window = UIWindow(frame: UIScreen.main.bounds)
 
     factory.startReactNative(
-      withModuleName: "Hearth",
+      withModuleName: "PantryPal",
       in: window,
       launchOptions: launchOptions
     )
@@ -40,7 +40,14 @@ class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
 
   override func bundleURL() -> URL? {
 #if DEBUG
-    RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
+    let metroPort = ProcessInfo.processInfo.environment["RCT_METRO_PORT"] ?? "8080"
+    let packagerHost = "127.0.0.1:\(metroPort)"
+    let provider = RCTBundleURLProvider.sharedSettings()
+    provider.jsLocation = packagerHost
+
+    // If provider URL discovery fails, force a deterministic debug bundle URL.
+    return provider.jsBundleURL(forBundleRoot: "index")
+      ?? URL(string: "http://\(packagerHost)/index.bundle?platform=ios&dev=true&minify=false")
 #else
     Bundle.main.url(forResource: "main", withExtension: "jsbundle")
 #endif

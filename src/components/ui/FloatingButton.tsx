@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
-import { colors, shadows, spacing, typeScale } from '../../theme';
+import { colors, shadows, spacing } from '../../theme';
 
 export function FloatingButton({
   label,

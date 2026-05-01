@@ -10,3 +10,4 @@ export { ProgressDots } from './ProgressDots';
 export { MetricCard, MiniMetric } from './MetricCard';
 export { RecipeCard } from './RecipeCard';
 export { SelectionTile } from './SelectionTile';
+export { AppHeader } from './AppHeader';

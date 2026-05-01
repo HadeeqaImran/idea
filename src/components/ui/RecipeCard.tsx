@@ -1,5 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Ionicon from '@react-native-vector-icons/ionicons/static';
+import type { IoniconsIconName } from '@react-native-vector-icons/ionicons/static';
 import { colors, radii, spacing, typeScale } from '../../theme';
 import type { Recipe } from '../../types';
 import { Chip } from './Chip';
@@ -15,7 +17,11 @@ export function RecipeCard({ recipe }: { recipe: Recipe }) {
           recipe.tone === 'gold' && styles.recipeHeroGold,
         ]}
       >
-        <Text style={styles.recipeEmoji}>{recipe.emoji}</Text>
+        <Ionicon
+          name={recipe.icon as IoniconsIconName}
+          size={44}
+          color={colors.darkEspresso}
+        />
         <View
           style={[
             styles.recipeBadge,
@@ -72,9 +78,6 @@ const styles = StyleSheet.create({
   },
   recipeHeroGold: {
     backgroundColor: colors.linen,
-  },
-  recipeEmoji: {
-    fontSize: 44,
   },
   recipeBadge: {
     position: 'absolute',

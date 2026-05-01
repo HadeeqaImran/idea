@@ -13,12 +13,12 @@ export type ModuleKey =
 export type TabKey = 'home' | 'pantry' | 'chef' | 'recipes' | 'community';
 
 export type ActionCard = {
-  emoji: string;
+  icon: string;
   label: string;
 };
 
 export type Recipe = {
-  emoji: string;
+  icon: string;
   title: string;
   subtitle: string;
   chips: string[];

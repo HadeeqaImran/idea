@@ -1,7 +1,10 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import Ionicon from '@react-native-vector-icons/ionicons/static';
+import type { IoniconsIconName } from '@react-native-vector-icons/ionicons/static';
 import { colors, radii, spacing, typeScale } from '../theme';
 import {
+  AppHeader,
   FloatingButton,
   FoodIcon,
   PillButton,
@@ -11,7 +14,7 @@ import {
 } from '../components/ui';
 
 function PantryRow({
-  emoji,
+  icon,
   title,
   meta,
   badge,
@@ -19,7 +22,7 @@ function PantryRow({
   danger,
   borderless,
 }: {
-  emoji: string;
+  icon: string;
   title: string;
   meta: string;
   badge: string;
@@ -29,7 +32,7 @@ function PantryRow({
 }) {
   return (
     <View style={[styles.pantryRow, borderless && styles.rowNoBorder]}>
-      <FoodIcon emoji={emoji} />
+      <FoodIcon icon={icon} />
       <View style={styles.flexOne}>
         <Text style={styles.rowTitle}>{title}</Text>
         <Text style={styles.rowMeta}>{meta}</Text>
@@ -56,17 +59,21 @@ function PantryRow({
 }
 
 function MethodTile({
-  emoji,
+  icon,
   label,
   active,
 }: {
-  emoji: string;
+  icon: string;
   label: string;
   active?: boolean;
 }) {
   return (
     <View style={[styles.methodTile, active && styles.methodTileActive]}>
-      <Text style={styles.methodEmoji}>{emoji}</Text>
+      <Ionicon
+        name={icon as IoniconsIconName}
+        size={22}
+        color={active ? colors.white : colors.darkEspresso}
+      />
       <Text style={[styles.methodLabel, active && styles.methodLabelActive]}>
         {label}
       </Text>
@@ -77,10 +84,12 @@ function MethodTile({
 export function PantryScreen() {
   return (
     <>
-      <View style={styles.rowBetween}>
-        <Text style={styles.displayTitle}>My Pantry</Text>
-        <FloatingButton label="+" />
-      </View>
+      <AppHeader
+        title="My Pantry"
+        rightAccessory={<FloatingButton label="+" />}
+        showMenuButton={false}
+        style={styles.header}
+      />
 
       <SearchPill label="Search your pantry…" />
 
@@ -91,12 +100,12 @@ export function PantryScreen() {
         contentContainerStyle={styles.horizontalList}
       >
         {([
-          ['🧊', 'Fridge', '14 items', true],
-          ['🫙', 'Pantry', '22 items', false],
-          ['❄️', 'Freezer', '8 items', false],
-          ['🏠', 'Household', '11 items', false],
-          ['💊', 'Medicine', '6 items', false],
-        ] as const).map(([emoji, label, count, active]) => (
+          ['snow-outline', 'Fridge', '14 items', true],
+          ['file-tray-full-outline', 'Pantry', '22 items', false],
+          ['snow-outline', 'Freezer', '8 items', false],
+          ['home-outline', 'Household', '11 items', false],
+          ['medkit-outline', 'Medicine', '6 items', false],
+        ] as const).map(([icon, label, count, active]) => (
           <View
             key={label}
             style={[
@@ -104,7 +113,11 @@ export function PantryScreen() {
               active ? styles.shelfCardActive : styles.shelfCardInactive,
             ]}
           >
-            <Text style={styles.shelfEmoji}>{emoji}</Text>
+            <Ionicon
+              name={icon as IoniconsIconName}
+              size={26}
+              color={active ? colors.white : colors.darkEspresso}
+            />
             <Text style={[styles.shelfTitle, active ? styles.shelfTitleActive : null]}>
               {label}
             </Text>
@@ -117,20 +130,20 @@ export function PantryScreen() {
 
       <SurfaceCard style={[styles.stackGap, styles.expiryCardEmphasis]}>
         <View style={styles.rowBetween}>
-          <SectionLabel label="⚠️ Expiring soon" noMargin />
+          <SectionLabel label="Expiring soon" noMargin />
           <Text style={styles.inlineAccent}>Use these up</Text>
         </View>
-        <PantryRow emoji="🥛" title="Full fat milk" meta="Fridge · 900ml" badge="Tomorrow" danger />
-        <PantryRow emoji="🍅" title="Cherry tomatoes" meta="Fridge · 200g" badge="2 days" />
-        <PantryRow emoji="🧀" title="Mozzarella" meta="Fridge · 125g" badge="3 days" borderless />
+        <PantryRow icon="flask-outline" title="Full fat milk" meta="Fridge · 900ml" badge="Tomorrow" danger />
+        <PantryRow icon="leaf-outline" title="Cherry tomatoes" meta="Fridge · 200g" badge="2 days" />
+        <PantryRow icon="pizza-outline" title="Mozzarella" meta="Fridge · 125g" badge="3 days" borderless />
         <PillButton label="Show recipes using these" compact />
       </SurfaceCard>
 
-      <SectionLabel label="🧊 Fridge" />
+      <SectionLabel label="Fridge" />
       <SurfaceCard style={styles.stackGap}>
-        <PantryRow emoji="🥚" title="Free-range eggs" meta="6 remaining" badge="12 days" success />
-        <PantryRow emoji="🧈" title="Salted butter" meta="250g block" badge="18 days" success />
-        <PantryRow emoji="🥬" title="Spinach" meta="200g bag" badge="5 days" success borderless />
+        <PantryRow icon="egg-outline" title="Free-range eggs" meta="6 remaining" badge="12 days" success />
+        <PantryRow icon="nutrition-outline" title="Salted butter" meta="250g block" badge="18 days" success />
+        <PantryRow icon="leaf" title="Spinach" meta="200g bag" badge="5 days" success borderless />
       </SurfaceCard>
 
       <SurfaceCard style={styles.stackGap}>
@@ -147,9 +160,9 @@ export function PantryScreen() {
           <Text style={styles.scanText}>Point at barcode or product label</Text>
         </View>
         <View style={styles.threeColumnGrid}>
-          <MethodTile label="Photo receipt" emoji="📷" />
-          <MethodTile label="Scan barcode" emoji="📊" active />
-          <MethodTile label="Type item" emoji="✍️" />
+          <MethodTile label="Photo receipt" icon="camera-outline" />
+          <MethodTile label="Scan barcode" icon="barcode-outline" active />
+          <MethodTile label="Type item" icon="pencil-outline" />
         </View>
       </SurfaceCard>
     </>
@@ -157,14 +170,13 @@ export function PantryScreen() {
 }
 
 const styles = StyleSheet.create({
+  header: {
+    marginBottom: spacing.md,
+  },
   rowBetween: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-  },
-  displayTitle: {
-    ...typeScale.displayLg,
-    color: colors.darkEspresso,
   },
   stackGap: {
     marginTop: spacing.md,
@@ -192,9 +204,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.border,
-  },
-  shelfEmoji: {
-    fontSize: 26,
   },
   shelfTitle: {
     ...typeScale.label,
@@ -346,9 +355,6 @@ const styles = StyleSheet.create({
   methodTileActive: {
     backgroundColor: colors.terracotta,
     borderColor: colors.terracotta,
-  },
-  methodEmoji: {
-    fontSize: 22,
   },
   methodLabel: {
     ...typeScale.label,

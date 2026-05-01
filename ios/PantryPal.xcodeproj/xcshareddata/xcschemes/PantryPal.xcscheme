@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "Hearth.app"
-               BlueprintName = "Hearth"
-               ReferencedContainer = "container:Hearth.xcodeproj">
+               BuildableName = "PantryPal.app"
+               BlueprintName = "PantryPal"
+               ReferencedContainer = "container:PantryPal.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "HearthTests.xctest"
-               BlueprintName = "HearthTests"
-               ReferencedContainer = "container:Hearth.xcodeproj">
+               BuildableName = "PantryPalTests.xctest"
+               BlueprintName = "PantryPalTests"
+               ReferencedContainer = "container:PantryPal.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Hearth.app"
-            BlueprintName = "Hearth"
-            ReferencedContainer = "container:Hearth.xcodeproj">
+            BuildableName = "PantryPal.app"
+            BlueprintName = "PantryPal"
+            ReferencedContainer = "container:PantryPal.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Hearth.app"
-            BlueprintName = "Hearth"
-            ReferencedContainer = "container:Hearth.xcodeproj">
+            BuildableName = "PantryPal.app"
+            BlueprintName = "PantryPal"
+            ReferencedContainer = "container:PantryPal.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

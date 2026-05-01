@@ -1,4 +1,4 @@
-package com.hearth.app
+package com.pantrypal.app
 
 import android.app.Application
 import com.facebook.react.PackageList

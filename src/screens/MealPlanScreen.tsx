@@ -1,26 +1,32 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import Ionicon from '@react-native-vector-icons/ionicons/static';
+import type { IoniconsIconName } from '@react-native-vector-icons/ionicons/static';
 import { colors, radii, spacing, typeScale } from '../theme';
-import { PillButton, SectionLabel, WarmCard } from '../components/ui';
+import { AppHeader, PillButton, SectionLabel, WarmCard } from '../components/ui';
 
 function MealSlot({
   slot,
   title,
   type,
-  emoji,
+  icon,
   active,
 }: {
   slot: string;
   title: string;
   type: string;
-  emoji: string;
+  icon: string;
   active?: boolean;
 }) {
   return (
     <View style={styles.mealRow}>
       <Text style={styles.mealSlotLabel}>{slot}</Text>
       <View style={[styles.mealCard, active && styles.mealCardActive]}>
-        <Text style={styles.mealEmoji}>{emoji}</Text>
+        <Ionicon
+          name={icon as IoniconsIconName}
+          size={16}
+          color={colors.darkEspresso}
+        />
         <View>
           <Text style={[styles.mealType, active && styles.mealTypeActive]}>{type}</Text>
           <Text style={styles.mealTitle}>{title}</Text>
@@ -35,7 +41,10 @@ function EmptyMealSlot({ slot, label }: { slot: string; label: string }) {
     <View style={styles.mealRow}>
       <Text style={styles.mealSlotLabel}>{slot}</Text>
       <View style={styles.mealEmpty}>
-        <Text style={styles.mealEmptyText}>☀️ {label}</Text>
+        <View style={styles.emptyMealRow}>
+          <Ionicon name="sunny-outline" size={14} color={colors.warmTaupe} />
+          <Text style={styles.mealEmptyText}>{label}</Text>
+        </View>
       </View>
     </View>
   );
@@ -63,13 +72,13 @@ function BalanceTile({
 export function MealPlanScreen() {
   return (
     <>
-      <View style={styles.rowBetween}>
-        <View>
-          <Text style={styles.displayTitle}>This Week</Text>
-          <Text style={styles.sectionMeta}>10–16 March</Text>
-        </View>
-        <PillButton label="✨ AI plan" compact />
-      </View>
+      <AppHeader
+        title="This Week"
+        subtitle="10–16 March"
+        rightAccessory={<PillButton label="AI plan" compact />}
+        showMenuButton={false}
+        style={styles.header}
+      />
 
       <ScrollView
         horizontal
@@ -100,13 +109,13 @@ export function MealPlanScreen() {
       </ScrollView>
 
       <SectionLabel label="Monday, 10 March" />
-      <MealSlot slot="B" title="Overnight oats with berries" type="Breakfast" emoji="🥣" />
-      <MealSlot slot="L" title="Caprese salad + sourdough" type="Lunch" emoji="🥗" />
-      <MealSlot slot="D" title="Pasta Aglio e Olio" type="Dinner · Tonight" emoji="🍝" active />
+      <MealSlot slot="B" title="Overnight oats with berries" type="Breakfast" icon="cafe-outline" />
+      <MealSlot slot="L" title="Caprese salad + sourdough" type="Lunch" icon="nutrition-outline" />
+      <MealSlot slot="D" title="Pasta Aglio e Olio" type="Dinner · Tonight" icon="restaurant-outline" active />
 
       <SectionLabel label="Tuesday, 11 March" />
       <EmptyMealSlot slot="B" label="Tap to add breakfast" />
-      <MealSlot slot="D" title="Shakshuka" type="Dinner" emoji="🍲" />
+      <MealSlot slot="D" title="Shakshuka" type="Dinner" icon="cafe-outline" />
 
       <WarmCard style={styles.stackGap}>
         <SectionLabel label="This week's nutrition balance" noMargin />
@@ -121,18 +130,8 @@ export function MealPlanScreen() {
 }
 
 const styles = StyleSheet.create({
-  rowBetween: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  displayTitle: {
-    ...typeScale.displayLg,
-    color: colors.darkEspresso,
-  },
-  sectionMeta: {
-    ...typeScale.bodySm,
-    color: colors.warmTaupe,
+  header: {
+    marginBottom: spacing.md,
   },
   horizontalList: {
     gap: spacing.sm,
@@ -201,9 +200,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.terracottaWash,
     borderColor: colors.terracotta,
   },
-  mealEmoji: {
-    fontSize: 16,
-  },
   mealType: {
     ...typeScale.label,
     color: colors.warmTaupe,
@@ -228,6 +224,11 @@ const styles = StyleSheet.create({
   mealEmptyText: {
     ...typeScale.bodySm,
     color: colors.warmTaupe,
+  },
+  emptyMealRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
   },
   balanceTile: {
     flex: 1,

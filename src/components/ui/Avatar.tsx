@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { colors, radii, typeScale } from '../../theme';
+import { colors, typeScale } from '../../theme';
 
 export function Avatar({
   label,

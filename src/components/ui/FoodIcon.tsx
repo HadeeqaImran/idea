@@ -1,11 +1,13 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import Ionicon from '@react-native-vector-icons/ionicons/static';
+import type { IoniconsIconName } from '@react-native-vector-icons/ionicons/static';
 import { colors, radii } from '../../theme';
 
-export function FoodIcon({ emoji }: { emoji: string }) {
+export function FoodIcon({ icon }: { icon: string }) {
   return (
     <View style={styles.foodIcon}>
-      <Text style={styles.foodIconText}>{emoji}</Text>
+      <Ionicon name={icon as IoniconsIconName} size={18} color={colors.darkEspresso} />
     </View>
   );
 }
@@ -18,8 +20,5 @@ const styles = StyleSheet.create({
     backgroundColor: colors.warmCream,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  foodIconText: {
-    fontSize: 18,
   },
 });

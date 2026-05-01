@@ -1,7 +1,10 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { colors, radii, spacing, typeScale } from '../theme';
+import Ionicon from '@react-native-vector-icons/ionicons/static';
+import type { IoniconsIconName } from '@react-native-vector-icons/ionicons/static';
+import { colors, spacing, typeScale } from '../theme';
 import {
+  AppHeader,
   Avatar,
   Chip,
   FloatingButton,
@@ -80,7 +83,11 @@ function FactTile({
 }) {
   return (
     <WarmCard style={styles.factTile}>
-      <Text style={styles.factIcon}>{icon}</Text>
+      <Ionicon
+        name={icon as IoniconsIconName}
+        size={16}
+        color={colors.darkEspresso}
+      />
       <Text style={styles.factValue}>{value}</Text>
       <Text style={styles.factLabel}>{label}</Text>
     </WarmCard>
@@ -90,7 +97,7 @@ function FactTile({
 export function RecipesScreen() {
   return (
     <>
-      <Text style={styles.displayTitle}>Recipe Book</Text>
+      <AppHeader title="Recipe Book" showMenuButton={false} style={styles.header} />
       <SearchPill label="Find recipes, cookbooks, family favourites…" />
 
       <ScrollView
@@ -106,7 +113,7 @@ export function RecipesScreen() {
 
       <RecipeCard
         recipe={{
-          emoji: '🍝',
+          icon: 'restaurant-outline',
           title: 'Pasta Aglio e Olio',
           subtitle: 'From your pantry · 5 of 5 ingredients',
           chips: ['20 min', 'Easy', 'Italian'],
@@ -116,7 +123,7 @@ export function RecipesScreen() {
       />
       <RecipeCard
         recipe={{
-          emoji: '🥗',
+          icon: 'nutrition-outline',
           title: 'Caprese Salad',
           subtitle: "From Nonna's kitchen · 10 min",
           chips: ['Add: basil', 'Quick'],
@@ -126,7 +133,7 @@ export function RecipesScreen() {
       />
       <RecipeCard
         recipe={{
-          emoji: '🍲',
+          icon: 'cafe-outline',
           title: "Mum's Lentil Soup",
           subtitle: 'Private · Added by Mum · 45 min',
           chips: ['Heirloom', 'Vegetarian'],
@@ -137,9 +144,9 @@ export function RecipesScreen() {
 
       <SurfaceCard style={styles.recipeDetailCard}>
         <View style={styles.recipeDetailHero}>
-          <Text style={styles.recipeDetailEmoji}>🍝</Text>
+          <Ionicon name="restaurant-outline" size={68} color={colors.white} />
           <FloatingButton label="←" small style={styles.recipeHeroLeft} />
-          <FloatingButton label="🔖" small style={styles.recipeHeroRight} />
+          <FloatingButton label="☆" small style={styles.recipeHeroRight} />
         </View>
         <View style={styles.recipeDetailBody}>
           <View style={styles.wrapRow}>
@@ -152,10 +159,10 @@ export function RecipesScreen() {
             <Text style={styles.sectionMeta}>Nonna Maria · Shared to family</Text>
           </View>
           <View style={styles.recipeFactGrid}>
-            <FactTile icon="⏱" value="20" label="mins" />
-            <FactTile icon="👥" value="4" label="servings" />
-            <FactTile icon="⭐" value="Easy" label="level" />
-            <FactTile icon="🔥" value="420" label="kcal" />
+            <FactTile icon="time-outline" value="20" label="mins" />
+            <FactTile icon="people-outline" value="4" label="servings" />
+            <FactTile icon="star-outline" value="Easy" label="level" />
+            <FactTile icon="flame-outline" value="420" label="kcal" />
           </View>
           <SectionLabel label="Ingredients" />
           <SurfaceCard>
@@ -165,7 +172,7 @@ export function RecipesScreen() {
             <IngredientRow label="Chilli flakes" amount="1 tsp ✓" owned />
             <IngredientRow label="Parmesan" amount="50g ✓" owned borderless />
           </SurfaceCard>
-          <PillButton label="👨‍🍳 Start cooking" />
+          <PillButton label="Start cooking" />
           <SectionLabel label="Steps" />
           <StepRow number="1" text="Bring a large pan of salted water to the boil. Cook pasta until al dente." done />
           <StepRow number="2" text="While pasta cooks, thinly slice the garlic and gently warm it in olive oil." />
@@ -177,6 +184,9 @@ export function RecipesScreen() {
 }
 
 const styles = StyleSheet.create({
+  header: {
+    marginBottom: spacing.md,
+  },
   displayTitle: {
     ...typeScale.displayLg,
     color: colors.darkEspresso,
@@ -195,9 +205,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.terracotta,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  recipeDetailEmoji: {
-    fontSize: 68,
   },
   recipeHeroLeft: {
     position: 'absolute',
@@ -236,9 +243,6 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 68,
     alignItems: 'center',
-  },
-  factIcon: {
-    fontSize: 16,
   },
   factValue: {
     ...typeScale.label,

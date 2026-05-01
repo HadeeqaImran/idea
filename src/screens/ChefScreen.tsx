@@ -1,5 +1,6 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import Ionicon from '@react-native-vector-icons/ionicons/static';
 import { colors, radii, shadows, spacing, typeScale } from '../theme';
 import { Chip, PillButton, ReplyChip, SecondaryButton, SurfaceCard } from '../components/ui';
 
@@ -18,7 +19,11 @@ function ChatMessage({
   return (
     <View style={[styles.chatMessageRow, isUser && styles.chatMessageRowUser]}>
       <View style={[styles.chatAvatar, isUser && styles.chatAvatarUser]}>
-        <Text>{isUser ? 'S' : '👨‍🍳'}</Text>
+        {isUser ? (
+          <Text>S</Text>
+        ) : (
+          <Ionicon name="restaurant-outline" size={14} color={colors.white} />
+        )}
       </View>
       <View style={[styles.chatContent, isUser && styles.chatContentUser]}>
         <View style={[styles.chatBubble, isUser && styles.chatBubbleUser]}>
@@ -38,7 +43,7 @@ export function ChefScreen() {
     <SurfaceCard style={styles.chatShell}>
       <View style={styles.chatHeader}>
         <View style={styles.chefBadge}>
-          <Text style={styles.chefBadgeEmoji}>👨‍🍳</Text>
+          <Ionicon name="restaurant-outline" size={20} color={colors.white} />
         </View>
         <View>
           <Text style={styles.chatHeaderName}>Sous</Text>
@@ -73,7 +78,7 @@ export function ChefScreen() {
           card={
             <View style={styles.inlineRecipeCard}>
               <View style={styles.inlineRecipeHero}>
-                <Text style={styles.inlineRecipeEmoji}>🍝</Text>
+                <Ionicon name="restaurant-outline" size={36} color={colors.darkEspresso} />
               </View>
               <View style={styles.inlineRecipeBody}>
                 <Text style={styles.inlineRecipeTitle}>Pasta Aglio e Olio</Text>
@@ -91,7 +96,7 @@ export function ChefScreen() {
 
         <View style={styles.chatMessageRow}>
           <View style={styles.chatAvatar}>
-            <Text>👨‍🍳</Text>
+            <Ionicon name="restaurant-outline" size={14} color={colors.white} />
           </View>
           <View style={styles.typingBubble}>
             <View style={styles.typingDot} />
@@ -115,9 +120,9 @@ export function ChefScreen() {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.horizontalList}
       >
-        <Chip label="🍽 What's for dinner?" />
-        <Chip label="📅 Plan my week" />
-        <Chip label="🛒 What am I missing?" />
+        <Chip label="What's for dinner?" />
+        <Chip label="Plan my week" />
+        <Chip label="What am I missing?" />
       </ScrollView>
     </SurfaceCard>
   );
@@ -144,9 +149,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: spacing.sm,
-  },
-  chefBadgeEmoji: {
-    fontSize: 20,
   },
   chatHeaderName: {
     ...typeScale.heading,
@@ -239,9 +241,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.warmCream,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  inlineRecipeEmoji: {
-    fontSize: 36,
   },
   inlineRecipeBody: {
     padding: spacing.md,

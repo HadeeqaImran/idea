@@ -1,7 +1,10 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import Ionicon from '@react-native-vector-icons/ionicons/static';
+import type { IoniconsIconName } from '@react-native-vector-icons/ionicons/static';
 import { colors, radii, spacing, typeScale } from '../theme';
 import {
+  AppHeader,
   Avatar,
   Chip,
   MiniMetric,
@@ -13,7 +16,7 @@ import {
 } from '../components/ui';
 
 function CookbookCard({
-  emoji,
+  icon,
   title,
   author,
   copy,
@@ -23,7 +26,7 @@ function CookbookCard({
   premium,
   sage,
 }: {
-  emoji: string;
+  icon: string;
   title: string;
   author: string;
   copy: string;
@@ -36,10 +39,13 @@ function CookbookCard({
   return (
     <SurfaceCard style={styles.cookbookCard}>
       <View style={[styles.cookbookHero, sage && styles.cookbookHeroSage]}>
-        <Text style={styles.cookbookEmoji}>{emoji}</Text>
+        <Ionicon name={icon as IoniconsIconName} size={44} color={colors.white} />
         {premium ? (
           <View style={styles.cookbookProBadge}>
-            <Text style={styles.cookbookProBadgeText}>👨‍🍳 Professional chef</Text>
+            <View style={styles.badgeWithIcon}>
+              <Ionicon name="restaurant-outline" size={12} color={colors.terracotta} />
+              <Text style={styles.cookbookProBadgeText}>Professional chef</Text>
+            </View>
           </View>
         ) : null}
       </View>
@@ -81,7 +87,7 @@ function CookbookCard({
 export function CommunityScreen() {
   return (
     <>
-      <Text style={styles.displayTitle}>Community</Text>
+      <AppHeader title="Community" showMenuButton={false} style={styles.header} />
       <SearchPill label="Find chefs, cookbooks…" />
 
       <ScrollView
@@ -97,7 +103,7 @@ export function CommunityScreen() {
 
       <SectionLabel label="Featured cookbooks" />
       <CookbookCard
-        emoji="🫒"
+        icon="leaf-outline"
         title="Mediterranean Simplicity"
         author="Marco Rossi · Milan, Italy"
         copy="Simple, honest Italian cooking. 48 recipes, all under 30 minutes. Used by 2,400 home cooks."
@@ -107,7 +113,7 @@ export function CommunityScreen() {
         premium
       />
       <CookbookCard
-        emoji="🌱"
+        icon="leaf-outline"
         title="Sunday Slow Cook"
         author="Amara Osei · London, UK"
         copy="Plant-based weekend cooking for the whole family. Warm, comforting, and deeply satisfying."
@@ -122,7 +128,7 @@ export function CommunityScreen() {
         <View style={styles.creatorProfileRow}>
           <Avatar label="M" large />
           <View style={styles.rowGapSm}>
-            <SecondaryButton label="💬 Message" compact />
+            <SecondaryButton label="Message" compact />
             <PillButton label="Follow" compact />
           </View>
         </View>
@@ -145,9 +151,8 @@ export function CommunityScreen() {
 }
 
 const styles = StyleSheet.create({
-  displayTitle: {
-    ...typeScale.displayLg,
-    color: colors.darkEspresso,
+  header: {
+    marginBottom: spacing.md,
   },
   horizontalList: {
     gap: spacing.sm,
@@ -187,9 +192,6 @@ const styles = StyleSheet.create({
   cookbookHeroSage: {
     backgroundColor: colors.sage,
   },
-  cookbookEmoji: {
-    fontSize: 44,
-  },
   cookbookProBadge: {
     position: 'absolute',
     bottom: spacing.sm,
@@ -203,6 +205,11 @@ const styles = StyleSheet.create({
     ...typeScale.label,
     color: colors.terracotta,
     fontWeight: '700',
+  },
+  badgeWithIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
   },
   recipeBody: {
     padding: spacing.lg,
