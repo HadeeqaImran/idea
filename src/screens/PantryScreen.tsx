@@ -87,7 +87,6 @@ export function PantryScreen() {
       <AppHeader
         title="My Pantry"
         rightAccessory={<FloatingButton label="+" />}
-        showMenuButton={false}
         style={styles.header}
       />
 

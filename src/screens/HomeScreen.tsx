@@ -28,7 +28,6 @@ export function HomeScreen() {
         subtitle={greeting}
         subtitleAccessory={<Ionicon name={icon} size={14} color={colors.warmTaupe} />}
         rightAccessory={<Avatar label={userInitial(user)} dot />}
-        showMenuButton={false}
         style={styles.header}
       />
 

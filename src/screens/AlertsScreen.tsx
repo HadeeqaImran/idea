@@ -98,7 +98,6 @@ export function AlertsScreen() {
       <AppHeader
         title="Alerts"
         subtitle="3 things need your attention."
-        showMenuButton={false}
         style={styles.header}
       />
 

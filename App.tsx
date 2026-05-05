@@ -1,7 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
-  Easing,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -14,13 +13,21 @@ import {
 } from 'react-native';
 import Ionicon from '@react-native-vector-icons/ionicons/static';
 import type { IoniconsIconName } from '@react-native-vector-icons/ionicons/static';
+import {
+  NavigationContainer,
+  type NavigatorScreenParams,
+  createNavigationContainerRef,
+} from '@react-navigation/native';
+import {
+  createBottomTabNavigator,
+  type BottomTabNavigationOptions,
+} from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { AppHeader, Avatar } from './src/components/ui';
-import { DrawerProvider } from './src/context/DrawerContext';
-import { colors, radii, spacing, typeScale } from './src/theme';
-import { UserProvider, useUser, userInitial } from './src/context/UserContext';
-import type { ModuleKey } from './src/types';
+import { Avatar } from './src/components/ui';
 import { MODULES, TABS } from './src/constants/modules';
+import { DrawerProvider } from './src/context/DrawerContext';
+import { UserProvider, useUser, userInitial } from './src/context/UserContext';
 import {
   AlertsScreen,
   ChefScreen,
@@ -33,320 +40,406 @@ import {
   RecipesScreen,
   ShoppingScreen,
 } from './src/screens';
+import { colors, radii, spacing, typeScale } from './src/theme';
+import type { ModuleKey, TabKey } from './src/types';
+
+type MainTabParamList = {
+  home: undefined;
+  pantry: undefined;
+  chef: undefined;
+  recipes: undefined;
+  community: undefined;
+};
+
+type DrawerOnlyRoute = Exclude<ModuleKey, TabKey>;
+
+type RootStackParamList = {
+  tabs: NavigatorScreenParams<MainTabParamList>;
+} & {
+  [K in DrawerOnlyRoute]: undefined;
+};
 
 const DRAWER_WIDTH = 286;
+const ALL_MODULE_KEYS: ModuleKey[] = MODULES.map(module => module.key);
+const TAB_KEYS: Array<keyof MainTabParamList> = [
+  'home',
+  'pantry',
+  'chef',
+  'recipes',
+  'community',
+];
 
-function App() {
-  return (
-    <UserProvider>
-      <StatusBar
-        translucent
-        backgroundColor="transparent"
-        barStyle="dark-content"
-      />
-      <PantryPalApp />
-    </UserProvider>
-  );
-}
+const QUICK_ACTIONS: Array<{
+  icon: IoniconsIconName;
+  label: string;
+  meta: string;
+}> = [
+  {
+    icon: 'people-outline',
+    label: 'Household members',
+    meta: 'Manage access and invites',
+  },
+  {
+    icon: 'bookmark-outline',
+    label: 'Saved lists',
+    meta: 'Pinned shopping collections',
+  },
+  {
+    icon: 'card-outline',
+    label: 'Billing and plan',
+    meta: 'Payments and subscription',
+  },
+  {
+    icon: 'help-circle-outline',
+    label: 'Help center',
+    meta: 'Guides and support',
+  },
+];
 
-function PantryPalApp() {
-  const { user } = useUser();
-  const [activeModule, setActiveModule] = useState<ModuleKey>('home');
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const entrance = useRef(new Animated.Value(1)).current;
-  const drawerProgress = useRef(new Animated.Value(0)).current;
-  const drawerEmail = useMemo(() => {
-    const normalized = user.name.toLowerCase().trim().replace(/\s+/g, '.');
-    return `${normalized}@pantrypal.app`;
-  }, [user.name]);
+const navigationRef = createNavigationContainerRef<RootStackParamList>();
+const Tab = createBottomTabNavigator<MainTabParamList>();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
-  const activeMeta = useMemo(
-    () => MODULES.find(m => m.key === activeModule) ?? MODULES[1],
-    [activeModule],
-  );
+function ScreenScaffold({ children }: { children: ReactNode }) {
+  const entrance = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    entrance.setValue(0);
     Animated.spring(entrance, {
       toValue: 1,
       useNativeDriver: true,
       speed: 16,
       bounciness: 5,
     }).start();
-  }, [activeModule, entrance]);
+  }, [entrance]);
 
   const translateY = entrance.interpolate({
     inputRange: [0, 1],
     outputRange: [14, 0],
   });
 
-  const drawerTranslateX = drawerProgress.interpolate({
-    inputRange: [0, 1],
-    outputRange: [-DRAWER_WIDTH, 0],
-  });
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      >
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.screenContent}
+        >
+          <Animated.View style={{ opacity: entrance, transform: [{ translateY }] }}>
+            {children}
+          </Animated.View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
+}
 
-  const drawerBackdropOpacity = drawerProgress.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 0.35],
-  });
+function HomeRoute() {
+  return (
+    <ScreenScaffold>
+      <HomeScreen />
+    </ScreenScaffold>
+  );
+}
 
-  const openDrawer = () => {
-    setIsDrawerOpen(true);
-    Animated.timing(drawerProgress, {
-      toValue: 1,
-      duration: 220,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
+function PantryRoute() {
+  return (
+    <ScreenScaffold>
+      <PantryScreen />
+    </ScreenScaffold>
+  );
+}
+
+function ChefRoute() {
+  return (
+    <ScreenScaffold>
+      <ChefScreen />
+    </ScreenScaffold>
+  );
+}
+
+function RecipesRoute() {
+  return (
+    <ScreenScaffold>
+      <RecipesScreen />
+    </ScreenScaffold>
+  );
+}
+
+function CommunityRoute() {
+  return (
+    <ScreenScaffold>
+      <CommunityScreen />
+    </ScreenScaffold>
+  );
+}
+
+function OnboardingRoute() {
+  return (
+    <ScreenScaffold>
+      <OnboardingScreen />
+    </ScreenScaffold>
+  );
+}
+
+function MealPlanRoute() {
+  return (
+    <ScreenScaffold>
+      <MealPlanScreen />
+    </ScreenScaffold>
+  );
+}
+
+function ShoppingRoute() {
+  return (
+    <ScreenScaffold>
+      <ShoppingScreen />
+    </ScreenScaffold>
+  );
+}
+
+function AlertsRoute() {
+  return (
+    <ScreenScaffold>
+      <AlertsScreen />
+    </ScreenScaffold>
+  );
+}
+
+function ProfileRoute() {
+  return (
+    <ScreenScaffold>
+      <ProfileScreen />
+    </ScreenScaffold>
+  );
+}
+
+function getTabScreenOptions({
+  route,
+}: {
+  route: { name: keyof MainTabParamList };
+}): BottomTabNavigationOptions {
+  const tabMeta = TABS.find(tab => tab.key === route.name);
+  const iconName = (tabMeta?.icon as IoniconsIconName) ?? 'ellipse-outline';
+
+  return {
+    headerShown: false,
+    tabBarLabel: tabMeta?.label ?? route.name,
+    tabBarIcon: ({ focused }) => (
+      <Ionicon
+        name={iconName}
+        size={18}
+        color={focused ? colors.terracotta : colors.warmTaupe}
+      />
+    ),
+    tabBarActiveTintColor: colors.terracotta,
+    tabBarInactiveTintColor: colors.warmTaupe,
+    tabBarLabelStyle: {
+      ...typeScale.label,
+      marginBottom: 2,
+    },
+    tabBarItemStyle: styles.bottomTab,
+    tabBarStyle: styles.bottomNav,
+    tabBarHideOnKeyboard: true,
+    sceneStyle: styles.scene,
+  };
+}
+
+function MainTabsNavigator() {
+  return (
+    <Tab.Navigator initialRouteName="home" screenOptions={getTabScreenOptions}>
+      <Tab.Screen name="home" component={HomeRoute} />
+      <Tab.Screen name="pantry" component={PantryRoute} />
+      <Tab.Screen name="chef" component={ChefRoute} />
+      <Tab.Screen name="recipes" component={RecipesRoute} />
+      <Tab.Screen name="community" component={CommunityRoute} />
+    </Tab.Navigator>
+  );
+}
+
+function RootStackNavigator() {
+  return (
+    <Stack.Navigator initialRouteName="tabs" screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="tabs" component={MainTabsNavigator} />
+      <Stack.Screen name="onboarding" component={OnboardingRoute} />
+      <Stack.Screen name="mealPlan" component={MealPlanRoute} />
+      <Stack.Screen name="shopping" component={ShoppingRoute} />
+      <Stack.Screen name="alerts" component={AlertsRoute} />
+      <Stack.Screen name="profile" component={ProfileRoute} />
+    </Stack.Navigator>
+  );
+}
+
+function PantryPalApp() {
+  const { user } = useUser();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [activeModule, setActiveModule] = useState<ModuleKey>('home');
+
+  const drawerEmail = useMemo(() => {
+    const normalized = user.name.toLowerCase().trim().replace(/\s+/g, '.');
+    return `${normalized}@pantrypal.app`;
+  }, [user.name]);
+
+  const openDrawer = () => setIsDrawerOpen(true);
+  const closeDrawer = () => setIsDrawerOpen(false);
+
+  const updateActiveModuleFromNavigation = () => {
+    if (!navigationRef.isReady()) {
+      return;
+    }
+
+    const currentRoute = navigationRef.getCurrentRoute();
+    const routeName = currentRoute?.name;
+
+    if (!routeName) {
+      return;
+    }
+
+    if (ALL_MODULE_KEYS.includes(routeName as ModuleKey)) {
+      setActiveModule(routeName as ModuleKey);
+      return;
+    }
+
   };
 
-  const closeDrawer = () => {
-    Animated.timing(drawerProgress, {
-      toValue: 0,
-      duration: 180,
-      easing: Easing.in(Easing.cubic),
-      useNativeDriver: true,
-    }).start(({ finished }) => {
-      if (finished) {
-        setIsDrawerOpen(false);
-      }
-    });
-  };
+  const selectModule = (module: ModuleKey) => {
+    if (!navigationRef.isReady()) {
+      return;
+    }
 
-  const selectModuleFromDrawer = (module: ModuleKey) => {
-    setActiveModule(module);
+    if (TAB_KEYS.includes(module as keyof MainTabParamList)) {
+      navigationRef.navigate('tabs', {
+        screen: module as keyof MainTabParamList,
+      });
+    } else {
+      navigationRef.navigate(module as DrawerOnlyRoute);
+    }
+
     closeDrawer();
   };
 
   return (
     <DrawerProvider value={{ isDrawerOpen, openDrawer, closeDrawer }}>
       <View style={styles.screen}>
-      {/* <View style={[styles.topBar, { paddingTop: insets.top + spacing.md }]}>
-        <Text style={styles.logo}>pantrypal</Text>
-        <Text style={styles.tagline}>
-          Your home. Your kitchen. Your peace of mind.
-        </Text>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.moduleRail}
+        <NavigationContainer
+          ref={navigationRef}
+          onReady={updateActiveModuleFromNavigation}
+          onStateChange={updateActiveModuleFromNavigation}
         >
-          {MODULES.map(module => {
-            const selected = module.key === activeModule;
-            return (
-              <Pressable
-                key={module.key}
-                onPress={() => setActiveModule(module.key)}
-                style={[styles.moduleChip, selected && styles.moduleChipActive]}
-              >
-                <Text
-                  style={[
-                    styles.moduleChipText,
-                    selected && styles.moduleChipTextActive,
-                  ]}
-                >
-                  {module.icon} {module.label}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </ScrollView>
-      </View> */}
+          <RootStackNavigator />
+        </NavigationContainer>
 
-      <SafeAreaView style={styles.safeArea}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
-        >
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingHorizontal: spacing.xl,
-          paddingTop: spacing.xl,
-          paddingBottom: 104 + spacing.lg,
-        }}
-      >
-        <Animated.View style={{ opacity: entrance, transform: [{ translateY }] }}>
-          <AppHeader
-            title={activeMeta.title}
-            subtitle={activeMeta.subtitle}
-          />
-          <ModuleView activeModule={activeModule} />
-        </Animated.View>
-      </ScrollView>
-
-      <View
-        style={[styles.bottomNav, { paddingBottom: spacing.md }]}
-      >
-        {TABS.map(tab => {
-          const selected = activeModule === (tab.key as ModuleKey);
-          return (
-            <Pressable
-              key={tab.key}
-              onPress={() => setActiveModule(tab.key as ModuleKey)}
-              style={styles.bottomTab}
-            >
-              <Ionicon
-                name={tab.icon as IoniconsIconName}
-                size={18}
-                color={selected ? colors.terracotta : colors.warmTaupe}
-              />
-              <Text
-                style={[styles.bottomTabLabel, selected && styles.bottomTabLabelActive]}
-              >
-                {tab.label}
-              </Text>
-              <View
-                style={[styles.bottomTabDot, selected && styles.bottomTabDotActive]}
-              />
+        {isDrawerOpen ? (
+          <View style={styles.drawerLayer} pointerEvents="box-none">
+            <Pressable style={styles.drawerBackdropHitArea} onPress={closeDrawer}>
+              <View style={styles.drawerBackdrop} />
             </Pressable>
-          );
-        })}
-      </View>
-      </KeyboardAvoidingView>
-      </SafeAreaView>
-      {isDrawerOpen ? (
-        <View style={styles.drawerLayer} pointerEvents="box-none">
-          <Pressable style={styles.drawerBackdropHitArea} onPress={closeDrawer}>
-            <Animated.View style={[styles.drawerBackdrop, { opacity: drawerBackdropOpacity }]} />
-          </Pressable>
-          <Animated.View
-            style={[styles.drawerPanel, { transform: [{ translateX: drawerTranslateX }] }]}
-          >
-            <SafeAreaView style={styles.drawerSafeArea}>
-              <View style={styles.drawerHeader}>
-                <Text style={styles.drawerBrand}>PantryPal</Text>
-                <Pressable onPress={closeDrawer} style={styles.drawerCloseButton}>
-                  <Ionicon name="close" size={20} color={colors.darkEspresso} />
-                </Pressable>
-              </View>
-              <ScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.drawerContent}
-              >
-                <View style={styles.drawerProfileCard}>
-                  <View style={styles.drawerProfileOrbLarge} />
-                  <View style={styles.drawerProfileOrbSmall} />
-                  <View style={styles.drawerProfileRow}>
-                    <Avatar label={userInitial(user)} large />
-                    <View style={styles.drawerProfileTextWrap}>
-                      <Text style={styles.drawerProfileName}>{user.name}</Text>
-                      <Text style={styles.drawerProfileEmail}>{drawerEmail}</Text>
-                    </View>
-                  </View>
-                  <View style={styles.drawerProfileMetaRow}>
-                    <View style={styles.drawerMetaPill}>
-                      <Ionicon name="location-outline" size={13} color={colors.white} />
-                      <Text style={styles.drawerMetaPillText}>{user.location ?? 'Home'}</Text>
-                    </View>
-                    <View style={styles.drawerMetaPill}>
-                      <Ionicon name="sparkles-outline" size={13} color={colors.white} />
-                      <Text style={styles.drawerMetaPillText}>Premium</Text>
-                    </View>
-                  </View>
+            <View style={styles.drawerPanel}>
+              <SafeAreaView style={styles.drawerSafeArea}>
+                <View style={styles.drawerHeader}>
+                  <Text style={styles.drawerBrand}>PantryPal</Text>
+                  <Pressable onPress={closeDrawer} style={styles.drawerCloseButton}>
+                    <Ionicon name="close" size={20} color={colors.darkEspresso} />
+                  </Pressable>
                 </View>
 
-                <Text style={styles.drawerSectionTitle}>Quick actions</Text>
-                <View style={styles.drawerUtilityList}>
-                  {[
-                    {
-                      icon: 'people-outline',
-                      label: 'Household members',
-                      meta: 'Manage access and invites',
-                    },
-                    {
-                      icon: 'bookmark-outline',
-                      label: 'Saved lists',
-                      meta: 'Pinned shopping collections',
-                    },
-                    {
-                      icon: 'card-outline',
-                      label: 'Billing and plan',
-                      meta: 'Payments and subscription',
-                    },
-                    {
-                      icon: 'help-circle-outline',
-                      label: 'Help center',
-                      meta: 'Guides and support',
-                    },
-                  ].map(action => (
-                    <Pressable key={action.label} style={styles.drawerUtilityItem}>
-                      <View style={styles.drawerUtilityIconWrap}>
-                        <Ionicon
-                          name={action.icon as IoniconsIconName}
-                          size={17}
-                          color={colors.darkEspresso}
-                        />
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={styles.drawerContent}
+                >
+                  <View style={styles.drawerProfileCard}>
+                    <View style={styles.drawerProfileOrbLarge} />
+                    <View style={styles.drawerProfileOrbSmall} />
+                    <View style={styles.drawerProfileRow}>
+                      <Avatar label={userInitial(user)} large />
+                      <View style={styles.drawerProfileTextWrap}>
+                        <Text style={styles.drawerProfileName}>{user.name}</Text>
+                        <Text style={styles.drawerProfileEmail}>{drawerEmail}</Text>
                       </View>
-                      <View style={styles.drawerUtilityTextWrap}>
-                        <Text style={styles.drawerUtilityLabel}>{action.label}</Text>
-                        <Text style={styles.drawerUtilityMeta}>{action.meta}</Text>
+                    </View>
+                    <View style={styles.drawerProfileMetaRow}>
+                      <View style={styles.drawerMetaPill}>
+                        <Ionicon name="location-outline" size={13} color={colors.white} />
+                        <Text style={styles.drawerMetaPillText}>{user.location ?? 'Home'}</Text>
                       </View>
-                      <Ionicon
-                        name="chevron-forward"
-                        size={15}
-                        color={colors.warmTaupe}
-                      />
-                    </Pressable>
-                  ))}
-                </View>
+                      <View style={styles.drawerMetaPill}>
+                        <Ionicon name="sparkles-outline" size={13} color={colors.white} />
+                        <Text style={styles.drawerMetaPillText}>Premium</Text>
+                      </View>
+                    </View>
+                  </View>
 
-                <Text style={styles.drawerSectionTitle}>App modules</Text>
-                <View style={styles.drawerMenuList}>
-                  {MODULES.map(module => {
-                    const selected = activeModule === module.key;
-                    return (
-                      <Pressable
-                        key={module.key}
-                        onPress={() => selectModuleFromDrawer(module.key)}
-                        style={[styles.drawerItem, selected && styles.drawerItemActive]}
-                      >
+                  <Text style={styles.drawerSectionTitle}>Quick actions</Text>
+                  <View style={styles.drawerUtilityList}>
+                    {QUICK_ACTIONS.map(action => (
+                      <Pressable key={action.label} style={styles.drawerUtilityItem}>
+                        <View style={styles.drawerUtilityIconWrap}>
+                          <Ionicon name={action.icon} size={17} color={colors.darkEspresso} />
+                        </View>
+                        <View style={styles.drawerUtilityTextWrap}>
+                          <Text style={styles.drawerUtilityLabel}>{action.label}</Text>
+                          <Text style={styles.drawerUtilityMeta}>{action.meta}</Text>
+                        </View>
                         <Ionicon
-                          name={module.icon as IoniconsIconName}
-                          size={18}
-                          color={selected ? colors.white : colors.darkEspresso}
+                          name="chevron-forward"
+                          size={15}
+                          color={colors.warmTaupe}
                         />
-                        <Text
-                          style={[
-                            styles.drawerItemLabel,
-                            selected && styles.drawerItemLabelActive,
-                          ]}
-                        >
-                          {module.label}
-                        </Text>
                       </Pressable>
-                    );
-                  })}
-                </View>
+                    ))}
+                  </View>
 
-                <Pressable style={styles.drawerSignOutButton}>
-                  <Ionicon name="log-out-outline" size={17} color={colors.firedClay} />
-                  <Text style={styles.drawerSignOutText}>Sign out</Text>
-                </Pressable>
-              </ScrollView>
-            </SafeAreaView>
-          </Animated.View>
-        </View>
-      ) : null}
+                  <Text style={styles.drawerSectionTitle}>App modules</Text>
+                  <View style={styles.drawerMenuList}>
+                    {MODULES.map(module => {
+                      const selected = activeModule === module.key;
+                      return (
+                        <Pressable
+                          key={module.key}
+                          onPress={() => selectModule(module.key)}
+                          style={[styles.drawerItem, selected && styles.drawerItemActive]}
+                        >
+                          <Ionicon
+                            name={module.icon as IoniconsIconName}
+                            size={18}
+                            color={selected ? colors.white : colors.darkEspresso}
+                          />
+                          <Text
+                            style={[
+                              styles.drawerItemLabel,
+                              selected && styles.drawerItemLabelActive,
+                            ]}
+                          >
+                            {module.label}
+                          </Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+
+                  <Pressable style={styles.drawerSignOutButton}>
+                    <Ionicon name="log-out-outline" size={17} color={colors.firedClay} />
+                    <Text style={styles.drawerSignOutText}>Sign out</Text>
+                  </Pressable>
+                </ScrollView>
+              </SafeAreaView>
+            </View>
+          </View>
+        ) : null}
       </View>
     </DrawerProvider>
   );
 }
 
-function ModuleView({ activeModule }: { activeModule: ModuleKey }) {
-  switch (activeModule) {
-    case 'onboarding': return <OnboardingScreen />;
-    case 'home':       return <HomeScreen />;
-    case 'pantry':     return <PantryScreen />;
-    case 'chef':       return <ChefScreen />;
-    case 'recipes':    return <RecipesScreen />;
-    case 'mealPlan':   return <MealPlanScreen />;
-    case 'shopping':   return <ShoppingScreen />;
-    case 'community':  return <CommunityScreen />;
-    case 'alerts':     return <AlertsScreen />;
-    case 'profile':    return <ProfileScreen />;
-    default:           return null;
-  }
+function App() {
+  return (
+    <UserProvider>
+      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
+      <PantryPalApp />
+    </UserProvider>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -357,53 +450,20 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
-  topBar: {
+  scene: {
+    backgroundColor: colors.linen,
+  },
+  screenContent: {
     paddingHorizontal: spacing.xl,
-    backgroundColor: colors.linen,
-  },
-  logo: {
-    ...typeScale.displayXl,
-    color: colors.terracotta,
-    textAlign: 'center',
-  },
-  tagline: {
-    ...typeScale.bodySm,
-    color: colors.warmTaupe,
-    textAlign: 'center',
-    marginTop: spacing.xs,
-  },
-  moduleRail: {
-    gap: spacing.sm,
     paddingTop: spacing.xl,
-    paddingBottom: spacing.sm,
-  },
-  moduleChip: {
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-    borderRadius: radii.pill,
-    backgroundColor: colors.linen,
-    borderWidth: 1.5,
-    borderColor: colors.border,
-  },
-  moduleChipActive: {
-    backgroundColor: colors.terracotta,
-    borderColor: colors.terracotta,
-  },
-  moduleChipText: {
-    ...typeScale.label,
-    color: colors.warmTaupe,
-  },
-  moduleChipTextActive: {
-    color: colors.white,
+    paddingBottom: 104 + spacing.lg,
   },
   bottomNav: {
     position: 'absolute',
     left: 0,
     right: 0,
     bottom: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
+    height: 76,
     backgroundColor: 'rgba(253,246,238,0.96)',
     borderTopWidth: 1,
     borderTopColor: colors.border,
@@ -412,24 +472,7 @@ const styles = StyleSheet.create({
   bottomTab: {
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 3,
     minWidth: 58,
-  },
-  bottomTabLabel: {
-    ...typeScale.label,
-    color: colors.warmTaupe,
-  },
-  bottomTabLabelActive: {
-    color: colors.terracotta,
-  },
-  bottomTabDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: 'transparent',
-  },
-  bottomTabDotActive: {
-    backgroundColor: colors.terracotta,
   },
   drawerLayer: {
     ...StyleSheet.absoluteFillObject,
@@ -440,7 +483,7 @@ const styles = StyleSheet.create({
   },
   drawerBackdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: colors.darkEspresso,
+    backgroundColor: 'rgba(44,31,20,0.35)',
   },
   drawerPanel: {
     position: 'absolute',

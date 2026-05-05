@@ -97,7 +97,7 @@ function FactTile({
 export function RecipesScreen() {
   return (
     <>
-      <AppHeader title="Recipe Book" showMenuButton={false} style={styles.header} />
+      <AppHeader title="Recipe Book" style={styles.header} />
       <SearchPill label="Find recipes, cookbooks, family favourites…" />
 
       <ScrollView

@@ -87,7 +87,7 @@ function CookbookCard({
 export function CommunityScreen() {
   return (
     <>
-      <AppHeader title="Community" showMenuButton={false} style={styles.header} />
+      <AppHeader title="Community" style={styles.header} />
       <SearchPill label="Find chefs, cookbooks…" />
 
       <ScrollView

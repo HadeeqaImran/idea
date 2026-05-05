@@ -76,7 +76,6 @@ export function MealPlanScreen() {
         title="This Week"
         subtitle="10–16 March"
         rightAccessory={<PillButton label="AI plan" compact />}
-        showMenuButton={false}
         style={styles.header}
       />
 

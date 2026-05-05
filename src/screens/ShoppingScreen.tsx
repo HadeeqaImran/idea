@@ -43,7 +43,6 @@ export function ShoppingScreen() {
       <AppHeader
         title="Shopping"
         rightAccessory={<FloatingButton label="+" />}
-        showMenuButton={false}
         style={styles.header}
       />
 
